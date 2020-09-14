@@ -4,8 +4,7 @@ name: Integration Test
 on:
   push:
     branches:
-      - master
-      - canary
+    - canary
   schedule:
     - cron:  '15 */4 * * *'
 
@@ -14,10 +13,15 @@ jobs:
   run-cluster-test:
     name: Run the pre-release suite of Cluster Test
     runs-on: self-hosted
+    strategy:
+      matrix:
+        branch: [master, canary]
     # The pre-release suite run time varies 1~1.5 hr.
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v1
+        with:
+          ref: ${{ matrix.branch }}
       - name: setup_env
         run: |
           HEAD_GIT_REV=$(git rev-parse --short=8 HEAD)
